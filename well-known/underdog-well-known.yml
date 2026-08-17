@@ -1,0 +1,91 @@
+generated: '2026-08-17'
+method: probed
+source: live GET probes of https://underdog.shop/.well-known/* on 2026-08-17
+name: Underdog well-known probe
+description: >-
+  Probe of the RFC 8615 /.well-known/ namespace on underdog.shop, the only host Underdog
+  operates for its storefront and agent surface. Four paths return real documents; five
+  return 404. The 404s are recorded because a recorded absence is data. A control probe of
+  https://underdog.shop/zzz-nonsense-xyz.txt returned 404, so this host is NOT a soft-404
+  catch-all and the 200s above are genuine documents rather than an SPA shell.
+host: underdog.shop
+control_probe:
+  url: https://underdog.shop/zzz-nonsense-xyz.txt
+  status: 404
+  note: Confirms 404s are real; the host does not answer 200 for arbitrary paths.
+paths:
+- path: /.well-known/ucp
+  status: 200
+  content_type: application/json
+  file: underdog-ucp.json
+  hit: true
+  note: >-
+    Universal Commerce Protocol merchant profile. Declares protocol version 2026-04-08 (and
+    2026-01-23), the dev.ucp.shopping service over MCP transport, seven UCP shopping
+    capabilities (checkout, fulfillment, discount, cart, order, catalog.search,
+    catalog.lookup) plus the dev.shopify.catalog extension, and two payment handlers
+    (com.google.pay and dev.shopify.card). merchant_name is "Underdog" and merchant_origin
+    is underdog.shop, which is what establishes ownership of this document.
+- path: /.well-known/openid-configuration
+  status: 200
+  content_type: application/json
+  file: underdog-openid-configuration.json
+  hit: true
+  note: >-
+    OpenID Connect discovery for Underdog customer accounts. issuer
+    https://shopify.com/authentication/69142905142 (Underdog's own Shopify shop id);
+    authorization, token, logout and JWKS endpoints are all on account.underdog.shop.
+- path: /.well-known/oauth-authorization-server
+  status: 200
+  content_type: application/json
+  file: underdog-oauth-authorization-server.json
+  hit: true
+  note: RFC 8414 authorization server metadata. Byte-identical to the OIDC discovery document.
+- path: /.well-known/oauth-protected-resource
+  status: 200
+  content_type: application/json
+  file: underdog-oauth-protected-resource.json
+  hit: true
+  note: >-
+    RFC 9728 protected resource metadata. resource https://underdog.shop, authorization
+    servers account.underdog.shop and shopify.com/authentication/69142905142, bearer token
+    in the Authorization header.
+- path: /.well-known/security.txt
+  status: 404
+  hit: false
+  note: No RFC 9116 security.txt is served. No SecurityTxt or Security pointer is emitted.
+- path: /.well-known/agent-card.json
+  status: 404
+  hit: false
+  note: No A2A agent card. Nothing was written to a2a/ — an agent card is never authored on a provider's behalf.
+- path: /.well-known/agent.json
+  status: 404
+  hit: false
+  note: Legacy pre-0.3 A2A path also misses.
+- path: /.well-known/api-catalog
+  status: 404
+  hit: false
+- path: /.well-known/ai-plugin.json
+  status: 404
+  hit: false
+related:
+- path: /llms.txt
+  status: 200
+  content_type: text/markdown
+  file: ../llms/underdog-llms.txt
+- path: /agents.md
+  status: 200
+  content_type: text/markdown
+  file: ../llms/underdog-agents.md
+  note: >-
+    Named by /llms.txt as the canonical agent-facing description, and the sole entry in
+    https://underdog.shop/sitemap_agentic_discovery.xml. The two documents are identical
+    except for one line, where each claims to be the canonical copy.
+- path: /robots.txt
+  status: 200
+- path: /sitemap.xml
+  status: 200
+- path: /sitemap_agentic_discovery.xml
+  status: 200
+hit_count: 4
+miss_count: 5

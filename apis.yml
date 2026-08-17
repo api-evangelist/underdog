@@ -1,12 +1,21 @@
 aid: underdog
 name: Underdog
-description: 'Underdog is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: climate-tech. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: 'Underdog (legal entity Older is Better, RCS Nantes 918 609 629) is a French direct-to-consumer
+  retailer of professionally refurbished large home appliances and televisions — washing machines, fridges,
+  dishwashers, tumble dryers, ovens, cookers, freezers, wine cabinets, TVs and Thermomix — reconditioned in
+  France and sold at up to 50% below new with a two-year warranty, delivery, installation and old-appliance
+  takeback. It is a circular-economy / climate-tech company backed by Serena. Underdog has no developer
+  programme and publishes no OpenAPI, but its storefront runs on Shopify and it exposes a genuine, live
+  agent-commerce surface on its own domain: an /llms.txt and /agents.md agent instruction document, a
+  Universal Commerce Protocol (UCP) merchant profile at /.well-known/ucp, two anonymously-listable remote
+  MCP endpoints (a 13-tool UCP commerce server and a 1-tool storefront policy server), an introspectable
+  Shopify Storefront GraphQL API, RFC 8414 / RFC 9728 OAuth metadata, and read-only product and collection
+  JSON endpoints.'
 url: https://raw.githubusercontent.com/api-evangelist/underdog/refs/heads/main/apis.yml
+image: https://underdog.shop/cdn/shop/files/UND-logo-Noir_1_3878927d-05f3-4209-b1e5-6113f92e6567.png?v=1762513808
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
+x-tier: profiled
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-08-17'
@@ -14,12 +23,143 @@ modified: '2026-08-17'
 tags:
 - Company
 - Climate Tech
-apis: []
+- Circular Economy
+- Refurbished Electronics
+- Home Appliances
+- Retail
+- Ecommerce
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- MCP
+- GraphQL
+- France
+apis:
+- aid: underdog-ucp-commerce
+  name: Underdog UCP Commerce MCP API
+  description: 'The Universal Commerce Protocol (UCP) shopping service Underdog serves from its own domain.
+    A remote MCP endpoint that answers tools/list anonymously with 13 tools covering catalog search and
+    lookup, cart create/read/update/cancel, checkout create/read/update/complete/cancel, and order lookup.
+    complete_checkout requires an idempotency-key and buyer approval. Merchant profile and supported
+    protocol versions are published at https://underdog.shop/.well-known/ucp.'
+  humanURL: https://underdog.shop/agents.md
+  baseURL: https://underdog.shop/api/ucp/mcp
+  tags:
+  - MCP
+  - Agentic Commerce
+  - Universal Commerce Protocol
+  - Checkout
+  - Catalog
+  properties:
+  - type: MCPServer
+    url: mcp/underdog-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/underdog-tool-crosswalk.yml
+  - type: Documentation
+    url: https://underdog.shop/agents.md
+  - type: Specification
+    url: https://ucp.dev/2026-04-08/specification/overview/
+- aid: underdog-storefront-graphql
+  name: Underdog Storefront GraphQL API
+  description: 'The Shopify Storefront GraphQL API as served on underdog.shop. It answers introspection
+    anonymously and exposes 424 types, 35 root query fields (products, collections, search, predictiveSearch,
+    cart, blog/article, menu, metaobjects, shop, localization) and 41 mutations (cart lifecycle, customer
+    accounts, Shop Pay payment request sessions) over Underdog''s own catalogue, priced in EUR for FR.'
+  humanURL: https://underdog.shop/llms.txt
+  baseURL: https://underdog.shop/api/2026-01/graphql.json
+  tags:
+  - GraphQL
+  - Storefront
+  - Catalog
+  - Cart
+  properties:
+  - type: GraphQL
+    url: graphql/underdog-storefront.graphql
+  - type: DataModel
+    url: data-model/underdog-data-model.yml
+  - type: ErrorCatalog
+    url: errors/underdog-problem-types.yml
+- aid: underdog-storefront-mcp
+  name: Underdog Storefront Policy MCP API
+  description: 'A second remote MCP endpoint on underdog.shop that answers tools/list anonymously with a
+    single natural-language tool, search_shop_policies_and_faqs, for questions about the store''s return,
+    shipping, warranty and contact policies.'
+  humanURL: https://underdog.shop/agents.md
+  baseURL: https://underdog.shop/api/mcp
+  tags:
+  - MCP
+  - Support
+  - Policies
+  properties:
+  - type: MCPServer
+    url: mcp/underdog-mcp.yml
+- aid: underdog-storefront-json
+  name: Underdog Storefront JSON Endpoints
+  description: 'Read-only, unauthenticated JSON representations of the Underdog catalogue published by the
+    Shopify storefront: /products.json, /products/{handle}.json, /collections/{handle}/products.json and
+    /search?q=&type=product, plus /sitemap.xml and an agentic-discovery sitemap listing /agents.md.'
+  humanURL: https://underdog.shop/llms.txt
+  baseURL: https://underdog.shop
+  tags:
+  - JSON
+  - Catalog
+  - Products
+  properties:
+  - type: Documentation
+    url: https://underdog.shop/llms.txt
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/underdog-domain-security.yml
 - type: Website
   url: https://underdog.shop/
+- type: Documentation
+  url: https://underdog.shop/agents.md
+- type: LLMsTxt
+  url: llms/underdog-llms.txt
+- type: WellKnown
+  url: well-known/underdog-well-known.yml
+- type: MCPServer
+  url: mcp/underdog-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/underdog-tool-crosswalk.yml
+- type: GraphQL
+  url: graphql/underdog-storefront.graphql
+- type: Authentication
+  url: authentication/underdog-authentication.yml
+- type: OAuthScopes
+  url: scopes/underdog-scopes.yml
+- type: Conformance
+  url: conformance/underdog-conformance.yml
+- type: Conventions
+  url: conventions/underdog-conventions.yml
+- type: Idempotency
+  url: conventions/underdog-conventions.yml
+- type: ErrorCatalog
+  url: errors/underdog-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/underdog-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/underdog-lifecycle.yml
+- type: DataModel
+  url: data-model/underdog-data-model.yml
+- type: Plans
+  url: plans/underdog-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/underdog-rate-limits.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: GitHubOrganization
+  url: https://github.com/underdog-shop
+- type: Support
+  url: https://underdog.shop/pages/contact
+- type: TermsOfService
+  url: https://underdog.shop/policies/terms-of-service
+- type: PrivacyPolicy
+  url: https://underdog.shop/policies/privacy-policy
+- type: Login
+  url: https://account.underdog.shop/
