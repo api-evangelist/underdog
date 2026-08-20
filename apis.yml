@@ -27,6 +27,20 @@ tags:
 - Refurbished Electronics
 - Home Appliances
 - Retail
+- E-Commerce
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- MCP
+- GraphQL
+- France
+tags_raw:
+- Company
+- Climate Tech
+- Circular Economy
+- Refurbished Electronics
+- Home Appliances
+- Retail
 - Ecommerce
 - Shopify
 - Agentic Commerce
@@ -101,6 +115,10 @@ apis:
   humanURL: https://underdog.shop/llms.txt
   baseURL: https://underdog.shop
   tags:
+  - JSON
+  - Catalog
+  - Product
+  tags_raw:
   - JSON
   - Catalog
   - Products
