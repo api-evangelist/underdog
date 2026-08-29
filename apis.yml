@@ -12,6 +12,17 @@ description: 'Underdog (legal entity Older is Better, RCS Nantes 918 609 629) is
   Shopify Storefront GraphQL API, RFC 8414 / RFC 9728 OAuth metadata, and read-only product and collection
   JSON endpoints.'
 url: https://raw.githubusercontent.com/api-evangelist/underdog/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://underdog.shop/cdn/shop/files/UND-logo-Noir_1_3878927d-05f3-4209-b1e5-6113f92e6567.png?v=1762513808
 x-type: company
 x-source: serena-portfolio
