@@ -23,6 +23,18 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source:
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://underdog.shop/cdn/shop/files/UND-logo-Noir_1_3878927d-05f3-4209-b1e5-6113f92e6567.png?v=1762513808
 x-type: company
 x-source: serena-portfolio
