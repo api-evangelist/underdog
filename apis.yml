@@ -42,7 +42,7 @@ x-tier: profiled
 x-tier-reason: portfolio-lead
 specificationVersion: '0.23'
 created: '2026-08-17'
-modified: '2026-08-17'
+modified: '2026-09-16'
 tags:
 - Company
 - Climate Tech
@@ -90,12 +90,20 @@ apis:
   properties:
   - type: MCPServer
     url: mcp/underdog-mcp.yml
+  - type: Authentication
+    url: authentication/underdog-authentication.yml
+  - type: Conventions
+    url: conventions/underdog-conventions.yml
+  - type: RateLimits
+    url: rate-limits/underdog-rate-limits.yml
+  - type: AgentSkill
+    url: skills/_index.yml
   - type: ToolCrosswalk
     url: mcp/underdog-tool-crosswalk.yml
   - type: Documentation
     url: https://underdog.shop/agents.md
   - type: Specification
-    url: https://ucp.dev/2026-04-08/specification/overview/
+    url: https://ucp.dev/2026-08-25/specification/overview/
 - aid: underdog:underdog-storefront-graphql
   name: Underdog Storefront GraphQL API
   description: The Shopify Storefront GraphQL API as served on underdog.shop. It answers introspection
@@ -184,8 +192,6 @@ common:
   url: errors/underdog-problem-types.yml
 - type: Lifecycle
   url: lifecycle/underdog-lifecycle.yml
-- type: Deprecation
-  url: lifecycle/underdog-lifecycle.yml
 - type: DataModel
   url: data-model/underdog-data-model.yml
 - type: Plans
@@ -204,3 +210,8 @@ common:
   url: https://underdog.shop/policies/privacy-policy
 - type: Login
   url: https://account.underdog.shop/
+x-enrichment:
+  date: '2026-09-16'
+  status: enriched
+  artifacts_added: 17
+  pass: local-v3
