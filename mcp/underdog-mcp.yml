@@ -1,0 +1,171 @@
+generated: '2026-09-16'
+method: searched
+source: https://underdog.shop/agents.md (names both endpoints) + anonymous tools/list probes of https://underdog.shop/api/ucp/mcp
+  and https://underdog.shop/api/mcp on 2026-09-16
+status: published
+name: Underdog MCP servers
+description: Two remote MCP endpoints served from Underdog's own storefront host (Shopify platform). The
+  UCP commerce server exposes 13 Universal Commerce Protocol shopping tools; the storefront server exposes
+  one policy/FAQ question-answering tool. Both answer initialize and tools/list anonymously.
+deployment:
+  mode: remote
+  endpoint: https://underdog.shop/api/ucp/mcp
+  auth: none
+  verified: probed
+  note: Discovery (initialize, tools/list) is anonymous. tools/call requires meta.ucp-agent.profile to
+    be a reachable UCP agent profile URI (a bogus/unreachable profile returns JSON-RPC -32001 "UCP discovery
+    failed", HTTP 422), and get_order additionally returned -32000 AuthenticationRequired ("A valid JWT
+    is required", HTTP 403). Auth is therefore none for discovery and agent-profile/JWT for some calls;
+    recorded as none because the endpoint needs no credential to reach.
+servers:
+- name: universal-commerce
+  endpoint: https://underdog.shop/api/ucp/mcp
+  transport: streamable-http (JSON-RPC 2.0 over HTTP POST)
+  protocolVersion: '2025-06-18'
+  serverInfo:
+    name: universal-commerce
+    version: 0.1.0
+  response_headers_observed:
+  - 'x-shopify-ucp-mcp-api-version: 2026-08-25'
+  - shopify-complexity-score
+  - x-request-id
+  alternate_endpoint: https://underdog-web.myshopify.com/api/ucp/mcp (named in /.well-known/ucp)
+  tools_manifest:
+    file: underdog-ucp-mcp-tools.json
+    method: probed
+    http_status: 200
+    note: Saved verbatim; refreshed 2026-09-16 (Apple Pay credential schemas added to checkout tools since
+      the 2026-08-17 capture). Every tool carries a full JSON Schema inputSchema.
+  tool_count: 13
+  tools:
+  - name: get_checkout
+    category: checkout
+    description: Returns details about the checkout, including line items, totals, and any applicable
+      discounts or taxes.
+    required:
+    - meta
+    - id
+  - name: create_checkout
+    category: checkout
+    description: Creates a checkout. Returns checkout details, including line items, totals, and any applicable
+      discounts or taxes.
+    required:
+    - meta
+    - checkout
+  - name: update_checkout
+    category: checkout
+    description: Updates a checkout. Returns checkout details, including line items, totals, and any applicable
+      discounts or taxes.
+    required:
+    - meta
+    - checkout
+    - id
+  - name: complete_checkout
+    category: checkout
+    description: Completes a checkout and returns the checkout result. Returns details about the completed
+      checkout, including order ID, Thank You Page URL, or any errors encountered.
+    required:
+    - meta
+    - id
+    - checkout
+  - name: cancel_checkout
+    category: checkout
+    description: Cancels a checkout.
+    required:
+    - meta
+    - id
+  - name: get_cart
+    category: cart
+    description: Get the cart contents
+    required:
+    - meta
+    - id
+  - name: create_cart
+    category: cart
+    description: Creates a new cart
+    required:
+    - meta
+    - cart
+  - name: update_cart
+    category: cart
+    description: Perform updates to a cart.
+    required:
+    - meta
+    - cart
+    - id
+  - name: cancel_cart
+    category: cart
+    description: Cancels a cart.
+    required:
+    - meta
+    - id
+  - name: get_order
+    category: order
+    description: Get the details of an order
+    required:
+    - meta
+    - id
+  - name: search_catalog
+    category: catalog
+    description: Search for products from the online store, hosted on Shopify.
+    required:
+    - meta
+    - catalog
+  - name: lookup_catalog
+    category: catalog
+    description: Look up multiple products or variants by identifier.
+    required:
+    - meta
+    - catalog
+  - name: get_product
+    category: catalog
+    description: Retrieve complete product detail by identifier. Returns a singular product
+    required:
+    - meta
+    - catalog
+- name: storefront-renderer
+  endpoint: https://underdog.shop/api/mcp
+  transport: streamable-http (JSON-RPC 2.0 over HTTP POST)
+  protocolVersion: '2025-06-18'
+  serverInfo:
+    name: storefront-renderer
+    version: 0.1.0
+  tools_manifest:
+    file: underdog-storefront-mcp-tools.json
+    method: probed
+    http_status: 200
+  tool_count: 1
+  tools:
+  - name: search_shop_policies_and_faqs
+    category: support
+    description: Answers natural-language questions about the store's policies, products and services
+      (returns, shipping, contact).
+    required:
+    - query
+implements:
+  protocol: Universal Commerce Protocol (UCP)
+  service: dev.ucp.shopping
+  version: '2026-08-25'
+  supported_versions:
+  - '2026-08-25'
+  - '2026-04-08'
+  - '2026-01-23'
+  spec: https://ucp.dev/2026-08-25/specification/overview/
+  schema: https://ucp.dev/2026-08-25/services/shopping/mcp.openrpc.json
+  platform: Shopify
+  note: The tool contract is defined by the UCP shopping service and implemented by Shopify, not authored
+    by Underdog. Endpoint, merchant profile (merchant_name Underdog, merchant_origin underdog.shop) and
+    agent policy are served from Underdog's host.
+discovery:
+- https://underdog.shop/.well-known/ucp
+- https://underdog.shop/agents.md
+- https://underdog.shop/llms.txt
+agent_rules:
+- Checkout requires human approval; agents must not complete payment without explicit buyer consent (agents.md).
+- The MCP endpoint is rate-limited per IP; back off on 429 (agents.md).
+- Pass context.address_country and context.currency for accurate pricing (agents.md).
+cross_links:
+  crosswalk: mcp/underdog-tool-crosswalk.yml
+  authentication: authentication/underdog-authentication.yml
+  conventions: conventions/underdog-conventions.yml
+  errors: errors/underdog-problem-types.yml

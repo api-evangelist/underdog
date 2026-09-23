@@ -1,0 +1,50 @@
+generated: '2026-09-16'
+method: probed
+source: https://underdog.shop/.well-known/ucp, https://underdog.shop/agents.md, publicApiVersions query on https://underdog.shop/api/2026-01/graphql.json
+note: >-
+  Underdog publishes no API versioning policy, deprecation policy, SLA, status page or
+  changelog of its own. The lifecycle signals that exist are platform-served on its host:
+  UCP protocol version negotiation and the Storefront GraphQL API's dated versions.
+versioning:
+  ucp:
+    scheme: dated protocol version negotiated via /.well-known/ucp
+    current: '2026-08-25'
+    supported:
+    - version: '2026-08-25'
+      spec: https://ucp.dev/2026-08-25/specification/overview/
+    - version: '2026-04-08'
+      discovery: https://underdog-web.myshopify.com/.well-known/ucp/2026-04-08
+    - version: '2026-01-23'
+      discovery: https://underdog-web.myshopify.com/.well-known/ucp/2026-01-23
+    note: Moved from 2026-04-08 (latest on 2026-08-17) to 2026-08-25 by 2026-09-16; no retirement dates are published.
+  graphql:
+    scheme: dated quarterly versions in the URL path
+    in_use: '2026-01'
+    publicApiVersions:
+    - {handle: '2025-10', supported: true}
+    - {handle: '2026-01', supported: true}
+    - {handle: '2026-04', supported: true}
+    - {handle: '2026-07', supported: true}
+    - {handle: '2026-10', supported: false}
+    - {handle: unstable, supported: false}
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: >-
+    No deprecation policy or RFC 8594 Sunset header is published by Underdog. The
+    Storefront GraphQL schema carries 51 @deprecated field/value markers, which are
+    Shopify platform deprecations rather than an Underdog policy, so no Deprecation
+    pointer is emitted.
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+status_page: null
+status_page_note: >-
+  Underdog publishes no status page. Shopify's platform status page belongs to a third
+  party and is not recorded as Underdog's.
+changelog: null
+product_lifecycle:
+  commercial_warranty: 24 months from delivery (CGV section 10.2)
+  withdrawal: 14 days from receipt (CGV section 11)
+  docs: https://underdog.shop/policies/terms-of-sale

@@ -1,0 +1,129 @@
+generated: '2026-09-16'
+method: probed
+source: >-
+  https://underdog.shop/agents.md, https://underdog.shop/llms.txt,
+  https://underdog.shop/api/ucp/mcp (initialize, tools/list, tools/call probes),
+  https://underdog.shop/api/2026-01/graphql.json, https://underdog.shop/.well-known/ucp,
+  https://underdog.shop/policies/terms-of-sale
+note: >-
+  Cross-cutting semantics of Underdog's machine-readable surfaces: the UCP and storefront
+  MCP endpoints, the Shopify Storefront GraphQL API and the read-only storefront JSON
+  endpoints, all on underdog.shop. Every statement is read from a document the host
+  returned on 2026-09-16 or from the schemas the endpoints published. No OpenAPI exists.
+transport:
+  mcp:
+    protocol: JSON-RPC 2.0 over HTTP POST (MCP 2025-06-18)
+    endpoints: [https://underdog.shop/api/ucp/mcp, https://underdog.shop/api/mcp]
+    content_type: application/json
+    accept: application/json, text/event-stream
+  graphql:
+    endpoint: https://underdog.shop/api/2026-01/graphql.json
+    method: POST
+  read_only_json:
+  - GET /products.json
+  - GET /products/{handle}.json
+  - GET /collections/{handle}/products.json
+  - GET /search?q={query}&type=product
+  - GET /sitemap.xml
+authentication:
+  discovery: anonymous
+  tool_calls: meta.ucp-agent.profile (reachable UCP agent profile URI); get_order also requires a JWT
+  shopper_accounts: OAuth 2.0 authorization code + PKCE (S256) against Shopify customer accounts
+  purchase_gate: '"Checkout requires human approval. Agents must not complete payment without explicit buyer consent." (agents.md)'
+  detail: authentication/underdog-authentication.yml
+idempotency:
+  supported: true
+  coverage: partial
+  scope:
+  - complete_checkout
+  mechanism: >-
+    Required `meta.idempotency-key` string ("An idempotency key for completing the
+    checkout") in the complete_checkout input schema.
+  header: null
+  retention: null
+  evidence: mcp/underdog-ucp-mcp-tools.json — complete_checkout inputSchema.properties.meta.required
+  note: >-
+    1 of the 7 mutating UCP tools (create_cart, update_cart, cancel_cart, create_checkout,
+    update_checkout, cancel_checkout, complete_checkout) carries an idempotency key — the
+    one that moves money. The other writes, and the GraphQL cart mutations, have no
+    published replay protection. Retention window is not published.
+reversibility:
+  grade: verified
+  surfaces:
+  - write_surface: complete_checkout (order placement)
+    reversal: Consumer right of withdrawal (droit de rétractation), then refund
+    reversal_operation: null
+    window: >-
+      "Le Client dispose, conformément aux dispositions du Code de la consommation, d'un
+      délai de rétractation de quatorze jours, sans avoir à motiver sa décision, lequel
+      délai court à compter de la réception du produit par le Client." (14 days from receipt)
+    docs: https://underdog.shop/policies/terms-of-sale
+    note: >-
+      Section 11 of the Conditions Générales de Vente (the refund policy page defers to it).
+      This is a customer-service flow, not an API operation: no refund or cancel-order tool
+      exists and get_order is read-only. After the order is confirmed the CGV states the sale
+      can no longer be modified or cancelled except through this withdrawal right. A
+      24-month commercial warranty (section 10.2) covers defects from delivery.
+  - write_surface: create_checkout / update_checkout
+    reversal: cancel_checkout
+    reversal_operation: cancel_checkout
+    window: Before the checkout is completed; no time limit is published.
+    docs: https://underdog.shop/agents.md
+  - write_surface: create_cart / update_cart
+    reversal: cancel_cart (MCP); cartLinesRemove (GraphQL)
+    reversal_operation: cancel_cart
+    window: Before checkout; no time limit is published.
+    docs: https://underdog.shop/agents.md
+  summary: >-
+    Graded verified: the money-moving action has a reversal path with a stated window
+    (14 days from receipt) published in Underdog's own terms of sale.
+dry_run_mode:
+  supported: false
+  note: No sandbox, test mode or test payment values are published for this store.
+pagination:
+  mcp: cursor (search_catalog pagination.cursor, defined by the UCP catalog schema)
+  graphql: Relay connections (first/after, last/before, pageInfo)
+  read_only_json: '?limit= and ?page= on /products.json'
+money:
+  representation: integer minor units paired with an ISO 4217 currency code (UCP tool responses)
+  currency: EUR
+  warning: Convert to major units before quoting a price to a buyer.
+buyer_context:
+  parameters: [context.address_country, context.currency]
+  note: Passed for accurate pricing and availability, per agents.md.
+error_envelope:
+  mcp: JSON-RPC 2.0 error object {code, message, data}
+  graphql: GraphQL errors[] with extensions.code, returned with HTTP 200
+  storefront_json: HTTP status codes (404 on unknown product handle)
+  problem_json: false
+  detail: errors/underdog-problem-types.yml
+rate_limiting:
+  documented: true
+  statement: '"Respect rate limits. The MCP endpoint is rate-limited per IP. Back off on 429 responses." (agents.md)'
+  numbers_published: false
+  headers_observed: []
+  cost_signal: >-
+    GraphQL responses carry extensions.cost.requestedQueryCost; MCP responses carry
+    shopify-complexity-score / shopify-complexity-score-v2 headers.
+  detail: rate-limits/underdog-rate-limits.yml
+request_tracing:
+  header: x-request-id
+  observed: true
+  evidence: x-request-id returned by /api/ucp/mcp and /products.json on 2026-09-16
+versioning:
+  mcp_protocol: '2025-06-18'
+  ucp:
+    current: '2026-08-25'
+    supported: ['2026-08-25', '2026-04-08', '2026-01-23']
+    response_header: x-shopify-ucp-mcp-api-version
+  graphql:
+    scheme: dated quarterly version in the path (/api/{version}/graphql.json)
+    in_use: '2026-01'
+    supported_per_publicApiVersions: ['2025-10', '2026-01', '2026-04', '2026-07']
+  detail: lifecycle/underdog-lifecycle.yml
+cross_links:
+  authentication: authentication/underdog-authentication.yml
+  errors: errors/underdog-problem-types.yml
+  lifecycle: lifecycle/underdog-lifecycle.yml
+  rate_limits: rate-limits/underdog-rate-limits.yml
+  mcp: mcp/underdog-mcp.yml

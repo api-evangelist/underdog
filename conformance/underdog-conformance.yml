@@ -1,0 +1,59 @@
+generated: '2026-09-16'
+method: probed
+source: well-known/, mcp/, graphql/ artifacts in this repo (all fetched from underdog.shop / account.underdog.shop on 2026-09-16)
+note: >-
+  Standards Underdog's surfaces demonstrably implement, each tied to a fetched document.
+  No compliance certification (SOC 2, ISO 27001, PCI DSS attestation) is published by
+  Underdog, so no Compliance claim is made; probe-security-programs.py found no
+  vulnerability disclosure programme or trust center.
+conformance:
+- id: ucp
+  name: Universal Commerce Protocol
+  version: '2026-08-25'
+  conforms: true
+  domain_standard: true
+  evidence: https://underdog.shop/.well-known/ucp (well-known/underdog-ucp.json) declares dev.ucp.shopping over MCP with checkout, cart, order, fulfillment, discount, catalog.search and catalog.lookup capabilities; tools/list implements them.
+- id: mcp
+  name: Model Context Protocol
+  version: '2025-06-18'
+  conforms: true
+  evidence: initialize on https://underdog.shop/api/ucp/mcp and /api/mcp returned protocolVersion 2025-06-18
+- id: jsonrpc-2.0
+  conforms: true
+  evidence: MCP error responses use the JSON-RPC 2.0 error object (-32600, -32000, -32001)
+- id: graphql
+  conforms: true
+  evidence: anonymous introspection of https://underdog.shop/api/2026-01/graphql.json (graphql/underdog-storefront.graphql)
+- id: oauth2
+  conforms: true
+  evidence: well-known/underdog-oauth-authorization-server.json (authorization_code, refresh_token, PKCE S256)
+- id: oidc
+  conforms: true
+  evidence: well-known/underdog-openid-configuration.json (issuer, jwks_uri, id_token RS256)
+- id: rfc8414
+  conforms: true
+  evidence: https://underdog.shop/.well-known/oauth-authorization-server HTTP 200
+- id: rfc9728
+  conforms: true
+  evidence: https://underdog.shop/.well-known/oauth-protected-resource HTTP 200 (resource, authorization_servers, bearer_methods_supported)
+- id: rfc7636-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported [S256]
+- id: llms-txt
+  conforms: true
+  evidence: https://underdog.shop/llms.txt HTTP 200 text/markdown
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: https://underdog.shop/.well-known/security.txt HTTP 404
+- id: rfc9457
+  conforms: false
+  evidence: no application/problem+json response observed; errors use JSON-RPC and GraphQL envelopes
+- id: idempotency
+  conforms: partial
+  evidence: complete_checkout requires meta.idempotency-key (conventions/underdog-conventions.yml)
+- id: pagination
+  conforms: true
+  evidence: Relay cursor connections in the GraphQL schema; pagination.cursor in UCP search_catalog
+- id: google-pay-ucp-handler
+  conforms: true
+  evidence: /.well-known/ucp payment handler com.google.pay version 2026-01-11 with merchant_origin underdog.shop

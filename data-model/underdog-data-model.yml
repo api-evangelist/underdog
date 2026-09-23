@@ -1,0 +1,66 @@
+generated: '2026-09-16'
+method: derived
+source: graphql/underdog-storefront.graphql
+note: >-
+  Entity-relationship graph derived from object-typed fields in the Storefront GraphQL
+  SDL introspected from https://underdog.shop/api/2026-01/graphql.json (no OpenAPI
+  exists). `*Connection` fields are has_many; nullable/non-null single object fields are
+  has_one/belongs_to. Global ids use the Shopify gid://shopify/<Type>/<id> scheme. The
+  schema is 424 types; only the commerce core Underdog's catalogue uses is modelled here.
+id_scheme: gid://shopify/<Type>/<numeric id>
+entities:
+- name: Product
+  description: A refurbished appliance, TV or Thermomix listing, priced in EUR.
+  relationships:
+  - {type: has_many, target: ProductVariant, via: variants}
+  - {type: has_many, target: Collection, via: collections}
+  - {type: has_many, target: Image, via: images}
+  - {type: has_one, target: Image, via: featuredImage}
+  - {type: has_many, target: ProductOption, via: options}
+  - {type: has_many, target: Metafield, via: metafields}
+- name: ProductVariant
+  relationships:
+  - {type: belongs_to, target: Product, via: product}
+  - {type: has_one, target: Image, via: image}
+  - {type: has_many, target: Metafield, via: metafields}
+- name: Collection
+  description: An appliance category (lave-linge, réfrigérateur, ...).
+  relationships:
+  - {type: has_many, target: Product, via: products}
+  - {type: has_one, target: Image, via: image}
+- name: Cart
+  relationships:
+  - {type: has_many, target: CartLine, via: lines}
+  - {type: has_many, target: Metafield, via: metafields}
+- name: CartLine
+  relationships:
+  - {type: belongs_to, target: ProductVariant, via: merchandise}
+- name: Customer
+  relationships:
+  - {type: has_many, target: Order, via: orders}
+  - {type: has_many, target: MailingAddress, via: addresses}
+  - {type: has_one, target: MailingAddress, via: defaultAddress}
+- name: Order
+  relationships:
+  - {type: has_one, target: MailingAddress, via: shippingAddress}
+  - {type: has_one, target: MailingAddress, via: billingAddress}
+- name: Blog
+  relationships:
+  - {type: has_many, target: Article, via: articles}
+- name: Article
+  relationships:
+  - {type: belongs_to, target: Blog, via: blog}
+  - {type: has_one, target: Image, via: image}
+- name: Localization
+  relationships:
+  - {type: has_one, target: Market, via: market}
+- name: Shop
+  relationships:
+  - {type: has_many, target: Metafield, via: metafields}
+- name: MailingAddress
+- name: Image
+- name: Metafield
+- name: ProductOption
+- name: Market
+mcp_projection:
+  note: UCP tools expose Product/Variant (catalog), Cart, Checkout and Order objects defined by the ucp.dev schemas; see mcp/underdog-tool-crosswalk.yml.

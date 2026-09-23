@@ -37,7 +37,8 @@ This store implements the [Universal Commerce Protocol](https://ucp.dev) for age
 6. **Complete** — Use `complete_checkout` to finalize (buyer must approve payment)
 
 ### Supported UCP Versions
-- `2026-04-08` (latest stable)
+- `2026-08-25` (latest stable)
+- `2026-04-08`
 - `2026-01-23`
 
 ### Important Rules
@@ -82,5 +83,6 @@ your agent can transact everywhere.
 
 - Start your own store: https://www.shopify.com/start
 - Shopify developer platform: https://shopify.dev
+- Build and test against sample data: https://mock.shop (free mock Storefront GraphQL API, no store or auth needed)
 - UCP specification: https://ucp.dev
 - Shop skill (recommended for personal shopping agents): https://shop.app/SKILL.md

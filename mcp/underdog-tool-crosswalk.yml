@@ -1,0 +1,128 @@
+generated: '2026-09-16'
+method: derived
+source: mcp/underdog-ucp-mcp-tools.json, mcp/underdog-storefront-mcp-tools.json, graphql/underdog-storefront.graphql
+name: Underdog tool crosswalk
+note: >-
+  Underdog publishes no OpenAPI, so there are no REST operationIds to bind to. The two
+  surfaces that coexist are the UCP/Storefront MCP servers and the Shopify Storefront
+  GraphQL API, both served on underdog.shop and both introspected anonymously. Each MCP
+  tool is bound here to the GraphQL root field(s) that serve the same capability, by name
+  and semantics — the MCP tools are not documented as wrappers of these fields, so
+  confidence is stated per row. Every GraphQL field named below was verified to exist in
+  the saved SDL. The `rest` key is kept empty on every row because no REST contract exists.
+surfaces:
+  openapi: null
+  graphql:
+    endpoint: https://underdog.shop/api/2026-01/graphql.json
+    schema: graphql/underdog-storefront.graphql
+    gated: false
+  mcp:
+  - url: https://underdog.shop/api/ucp/mcp
+    tools: mcp/underdog-ucp-mcp-tools.json
+    gated: false
+    note: tools/list anonymous; tools/call needs a reachable UCP agent profile URI, get_order a JWT.
+  - url: https://underdog.shop/api/mcp
+    tools: mcp/underdog-storefront-mcp-tools.json
+    gated: false
+crosswalk:
+- tool: search_catalog
+  category: catalog
+  rest: []
+  graphql: [products, search, predictiveSearch]
+  binding: semantic
+  confidence: medium
+- tool: lookup_catalog
+  category: catalog
+  rest: []
+  graphql: [nodes]
+  binding: semantic
+  confidence: medium
+  note: Batch lookup by global id maps to the nodes root field.
+- tool: get_product
+  category: catalog
+  rest: []
+  graphql: [product]
+  binding: semantic
+  confidence: high
+- tool: create_cart
+  category: cart
+  rest: []
+  graphql: [cartCreate]
+  binding: semantic
+  confidence: high
+- tool: get_cart
+  category: cart
+  rest: []
+  graphql: [cart]
+  binding: semantic
+  confidence: high
+- tool: update_cart
+  category: cart
+  rest: []
+  graphql: [cartLinesAdd, cartLinesUpdate, cartLinesRemove, cartBuyerIdentityUpdate, cartDiscountCodesUpdate]
+  binding: semantic
+  confidence: medium
+  note: One MCP tool with a full cart body versus several targeted GraphQL mutations.
+- tool: create_checkout
+  category: checkout
+  rest: []
+  graphql: [cartPrepareForCompletion]
+  binding: semantic
+  confidence: low
+  note: UCP checkout sessions have no one-to-one Storefront field; cart completion is the closest analogue.
+- tool: update_checkout
+  category: checkout
+  rest: []
+  graphql: [cartSelectedDeliveryOptionsUpdate, cartDeliveryAddressesAdd]
+  binding: semantic
+  confidence: low
+- tool: get_checkout
+  category: checkout
+  rest: []
+  graphql: [cartCompletionAttempt]
+  binding: semantic
+  confidence: low
+- tool: complete_checkout
+  category: checkout
+  rest: []
+  graphql: [cartSubmitForCompletion]
+  binding: semantic
+  confidence: low
+- tool: get_order
+  category: order
+  rest: []
+  graphql: [customer]
+  binding: semantic
+  confidence: low
+  note: Orders are reachable in GraphQL only as customer.orders with a customer access token.
+- tool: search_shop_policies_and_faqs
+  category: support
+  rest: []
+  graphql: [shop]
+  binding: semantic
+  confidence: medium
+  note: shop.refundPolicy / shippingPolicy / privacyPolicy return the policy documents the tool answers questions about; the FAQ half has no GraphQL field.
+mcp_only:
+- tool: cancel_cart
+  reason: The Storefront GraphQL API has no cart delete/cancel mutation.
+- tool: cancel_checkout
+  reason: No Storefront GraphQL mutation cancels a cart completion / checkout session.
+graphql_only:
+- field: collections
+  note: Collection browsing has no MCP tool (search_catalog filters only).
+- field: productRecommendations
+- field: menu
+- field: localization
+- field: blogs
+- field: pages
+- field: metaobjects
+- field: customerCreate
+  note: Customer account mutations (customerCreate, customerAccessTokenCreate, customerAddress*) have no MCP tool.
+- field: shopPayPaymentRequestSessionCreate
+rest_only: []
+coverage:
+  mcp_tools: 14
+  bound_to_graphql: 12
+  mcp_only: 2
+  graphql_only_listed: 9
+  rest_operations: 0

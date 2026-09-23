@@ -1,0 +1,18 @@
+generated: '2026-09-16'
+method: searched
+source: https://underdog.shop/agents.md
+note: >-
+  Underdog sells refurbished appliances, not an API product. There is no developer plan,
+  free tier, paid tier or contact-sales API gate. The MCP endpoints, Storefront GraphQL
+  API and storefront JSON endpoints are reachable without charge or key. Merchandise
+  prices are product pricing and are deliberately not modelled as plans. An honest zero.
+plan_count: 0
+plans: []
+pricing_model: none
+free_to_call: true
+evidence:
+- url: https://underdog.shop/api/ucp/mcp
+  status: 200
+  note: anonymous tools/list
+- url: https://underdog.shop/products.json
+  status: 200

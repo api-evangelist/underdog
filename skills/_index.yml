@@ -1,0 +1,23 @@
+generated: '2026-09-16'
+method: generated
+source: >-
+  Grounded in mcp/underdog-ucp-mcp-tools.json (verbatim tools/list from
+  https://underdog.shop/api/ucp/mcp) and Underdog's published agent guidance at
+  https://underdog.shop/agents.md. Every tool named appears in that response.
+note: >-
+  Underdog publishes no skills of its own. It publishes agents.md / llms.txt (saved at
+  llms/) recommending the third-party Shop skill https://shop.app/SKILL.md. The skills
+  below are API Evangelist-authored operating instructions for Underdog's own endpoint.
+skills:
+- file: underdog-browse-catalog.md
+  name: Browse the Underdog catalogue
+  api: mcp/underdog-mcp.yml
+  operations: [search_catalog, lookup_catalog, get_product]
+- file: underdog-cart-and-checkout.md
+  name: Cart and checkout at Underdog
+  api: mcp/underdog-mcp.yml
+  operations: [create_cart, get_cart, update_cart, cancel_cart, create_checkout, get_checkout, update_checkout, complete_checkout, cancel_checkout, get_order]
+provider_published:
+- file: ../llms/underdog-agents.md
+  source: https://underdog.shop/agents.md
+  method: searched

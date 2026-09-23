@@ -1,0 +1,53 @@
+generated: '2026-09-16'
+method: probed
+source: live error responses from https://underdog.shop/api/ucp/mcp, https://underdog.shop/api/2026-01/graphql.json and https://underdog.shop/products/{handle}.json on 2026-09-16
+format: jsonrpc-2.0 / graphql-errors (not rfc9457)
+note: >-
+  Underdog publishes no error reference. Every entry below was observed in a real
+  anonymous response; no code is inferred. The UCP tool response schemas additionally
+  define a `messages` array for business-level errors, which is not enumerated here
+  because no probe triggered one.
+envelopes:
+  mcp: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":<string|object>}}'
+  graphql: '{"errors":[{"message","locations","path","extensions":{"code",...}}]} with HTTP 200'
+problem_types:
+- surface: mcp
+  code: -32600
+  http_status: 400
+  message: Invalid Request
+  data: Invalid JSON in request body.
+  trigger: malformed JSON body
+  remediation: Send a valid JSON-RPC 2.0 request.
+- surface: mcp
+  code: -32001
+  http_status: 422
+  message: UCP discovery failed
+  data_codes: [invalid_profile_url, profile_unreachable]
+  data_fields: [code, content, continue_url]
+  trigger: missing or unreachable meta.ucp-agent.profile
+  remediation: Supply a reachable UCP agent profile URI in meta.ucp-agent.profile; data.continue_url points at the storefront for a human fallback.
+- surface: mcp
+  code: -32000
+  http_status: 403
+  message: AuthenticationRequired
+  data: 'Unauthorized: A valid JWT is required to call get_order.'
+  trigger: tools/call get_order without a token
+  remediation: Authenticate per https://shopify.dev/docs/agents/get-started/authentication
+- surface: mcp
+  code: null
+  http_status: 429
+  message: rate limited
+  trigger: exceeding the per-IP limit
+  remediation: Back off and retry.
+  evidence: documented in https://underdog.shop/agents.md; not triggered by a probe
+- surface: graphql
+  code: undefinedField
+  http_status: 200
+  message: Field '<name>' doesn't exist on type '<type>'
+  trigger: querying a field absent from the schema
+  remediation: Check the field against graphql/underdog-storefront.graphql.
+- surface: storefront-json
+  code: null
+  http_status: 404
+  trigger: GET /products/{handle}.json for an unknown handle
+  remediation: Resolve the handle via /products.json or search.
